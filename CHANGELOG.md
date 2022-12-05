@@ -1,3 +1,8 @@
+## 2.1.6
+* Implemented IOSPbxprojProcessor to update ios/Runner.xcodeproj/project.pbxproj file
+* Updated BUNDLE_IDENTIFIER in XCConfig files
+* Minor corrections
+
 ## 2.1.5
 * Json serializable build runner setup
 * Bumped dependencies
