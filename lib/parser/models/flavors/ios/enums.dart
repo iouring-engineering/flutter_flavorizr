@@ -23,4 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-enum Target { debug, profile, release }
+enum Target {
+  debug('debug'),
+  profile('profile'),
+  release('release');
+
+  final String value;
+  const Target(this.value);
+}

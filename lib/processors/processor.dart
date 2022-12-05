@@ -53,6 +53,8 @@ import 'package:flutter_flavorizr/processors/ios/launch_screen/ios_targets_launc
 import 'package:flutter_flavorizr/processors/ios/xcconfig/ios_xcconfig_targets_file_processor.dart';
 import 'package:flutter_flavorizr/utils/constants.dart';
 
+import 'ios/pbxproj/ios_pbxproj_processor.dart';
+
 class Processor extends AbstractProcessor<void> {
   final Map<String, AbstractProcessor<void>> _availableProcessors;
 
@@ -76,6 +78,7 @@ class Processor extends AbstractProcessor<void> {
 
     // iOS
     'ios:xcconfig',
+    'ios:pbxproj',
     'ios:buildTargets',
     'ios:schema',
     'ios:dummyAssets',
@@ -93,7 +96,7 @@ class Processor extends AbstractProcessor<void> {
     'assets:clean',
 
     // IDE
-    'ide:config'
+    'ide:config',
   ];
 
   Processor(this._pubspec)
@@ -198,6 +201,11 @@ class Processor extends AbstractProcessor<void> {
         K.iOSFlutterPath,
         config: pubspec.flavorizr,
       ),
+      'ios:pbxproj': ExistingFileStringProcessor(
+        K.iosConfigFile,
+        IOSPbxprojProcessor(config: pubspec.flavorizr),
+        config: pubspec.flavorizr,
+      ),
       'ios:buildTargets': IOSBuildConfigurationsTargetsProcessor(
         'ruby',
         K.tempiOSAddBuildConfigurationScriptPath,
@@ -237,7 +245,7 @@ class Processor extends AbstractProcessor<void> {
       'google:firebase': FirebaseProcessor(
         process: 'ruby',
         androidDestination: K.androidSrcPath,
-        iosDestination: K.iOSRunnerPath,
+        iosDestination: K.iOSFirebasePath,
         addFileScript: K.tempiOSAddFileScriptPath,
         runnerProject: K.iOSRunnerProjectPath,
         firebaseScript: K.tempiOSAddFirebaseBuildPhaseScriptPath,

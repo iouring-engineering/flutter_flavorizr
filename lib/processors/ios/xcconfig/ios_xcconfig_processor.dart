@@ -59,6 +59,9 @@ class IOSXCConfigProcessor extends StringProcessor {
   }
 
   void _appendIncludes(StringBuffer buffer) {
+    buffer.writeln(
+      '''#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.${_target!.value}-$_flavorName.xcconfig"''',
+    );
     buffer.writeln('#include "Generated.xcconfig"');
   }
 
@@ -66,8 +69,9 @@ class IOSXCConfigProcessor extends StringProcessor {
     final Map<String, Variable> variables = LinkedHashMap.from({
       'FLUTTER_TARGET': Variable(value: 'lib/main_$_flavorName.dart'),
       'ASSET_PREFIX': Variable(value: _flavorName),
-      'BUNDLE_NAME': Variable(value: _flavor.app.name),
+      'BUNDLE_NAME': Variable(value: _flavorName.toUpperCase()),
       'BUNDLE_DISPLAY_NAME': Variable(value: _flavor.app.name),
+      'BUNDLE_IDENTIFIER': Variable(value: _flavor.ios.bundleId),
     })
       ..addAll(
         _flavor.ios.variables.where((_, variable) =>

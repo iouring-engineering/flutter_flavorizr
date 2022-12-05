@@ -52,6 +52,8 @@ class K {
 
   static String iOSRunnerPath = '$iOSPath/Runner';
 
+  static String iOSFirebasePath = '$iOSRunnerPath/Firebase';
+
   static String iOSRunnerProjectPath = '$iOSPath/Runner.xcodeproj';
 
   static String iOSPListPath = '$iOSRunnerPath/Info.plist';
@@ -60,6 +62,8 @@ class K {
 
   static String iOSAppIconPath =
       '$iOSRunnerPath/Assets.xcassets/%sAppIcon.appiconset/%s';
+
+  static const String iosConfigFile = 'ios/Runner.xcodeproj/project.pbxproj';
 
   static String assetsZipPath = 'assets.tmp.zip';
 
@@ -86,7 +90,7 @@ class K {
 
   static String tempiOSFirebaseScriptPath = '$tempiOSPath/firebaseScript.sh';
 
-  static String tempScriptsPath = '$tempPath/scripts';
+  static String tempScriptsPath = 'flutter_flavorizr-master/scripts';
 
   static String tempiOSScriptsPath = '$tempScriptsPath/ios';
 
