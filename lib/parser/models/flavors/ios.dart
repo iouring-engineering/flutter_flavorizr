@@ -35,12 +35,15 @@ part 'ios.g.dart';
 class IOS extends OS with BuildSettingsMixin {
   @JsonKey(required: true, disallowNullValue: true)
   final String bundleId;
+  @JsonKey(required: true, disallowNullValue: true)
+  final String profileName;
 
   @JsonKey(disallowNullValue: true, defaultValue: {})
   final Map<String, Variable> variables;
 
   IOS({
     required this.bundleId,
+    required this.profileName,
     this.variables = const {},
     Map<String, dynamic> buildSettings = const {},
     bool generateDummyAssets = true,

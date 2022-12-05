@@ -9,11 +9,12 @@ part of 'ios.dart';
 IOS _$IOSFromJson(Map json) {
   $checkKeys(
     json,
-    requiredKeys: const ['bundleId'],
+    requiredKeys: const ['bundleId', 'profileName'],
     disallowNullValues: const ['firebase', 'icon', 'bundleId', 'variables'],
   );
   return IOS(
     bundleId: json['bundleId'] as String,
+    profileName: json['profileName'] as String,
     variables: (json['variables'] as Map?)?.map(
           (k, e) => MapEntry(k as String,
               Variable.fromJson(Map<String, dynamic>.from(e as Map))),

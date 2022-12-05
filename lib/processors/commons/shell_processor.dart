@@ -42,13 +42,17 @@ class ShellProcessor extends AbstractProcessor<void> {
 
   @override
   void execute() {
-    ProcessResult result = Process.runSync(
-      _path,
-      _args,
-      workingDirectory: workingDirectory,
-    );
-    if (result.exitCode != 0) {
-      print(result.stderr);
+    try {
+      ProcessResult result = Process.runSync(
+        _path,
+        _args,
+        workingDirectory: workingDirectory,
+      );
+      if (result.exitCode != 0) {
+        print(result.stderr);
+      }
+    } on Exception catch (e) {
+      stdout.writeln("Exception: $e");
     }
   }
 
