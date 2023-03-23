@@ -1,14 +1,19 @@
 import 'package:flutter_flavorizr/parser/models/flavorizr.dart';
+import 'package:flutter_flavorizr/parser/models/flavors/flavor.dart';
 import 'package:flutter_flavorizr/parser/models/flavors/ios/enums.dart';
 import 'package:flutter_flavorizr/processors/commons/string_processor.dart';
 
-import '../../../parser/models/flavors/flavor.dart';
-
 class IOSPbxprojProcessor extends StringProcessor {
-  static const String entryPoint = 'PROVISIONING_PROFILE_SPECIFIER';
+  static const String teamIDEntryPoint = 'DEVELOPMENT_TEAM';
+  static const String provProfileEntryPoint = 'PROVISIONING_PROFILE_SPECIFIER';
+  static const List<String> entryPoints = [
+    teamIDEntryPoint,
+    provProfileEntryPoint,
+  ];
 
   String _target(String target) =>
       target.substring(0, 1).toUpperCase() + target.substring(1);
+
   String baseConfigEntryPoint(String flavorName, String target) =>
       'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
 
@@ -21,22 +26,26 @@ class IOSPbxprojProcessor extends StringProcessor {
   String execute() {
     StringBuffer buffer = StringBuffer();
 
-    for (final target in Target.values) {
-      for (final flavor in config.flavors.entries) {
-        final entryPointPos =
-            _appendStartContent(buffer, flavor.key, target.value);
+    for (final entryPoint in entryPoints) {
+      for (final target in Target.values) {
+        for (final flavor in config.flavors.entries) {
+          final entryPointPos =
+              _appendStartContent(buffer, flavor.key, target.value, entryPoint);
 
-        final baseConfigPos = input!.indexOf(
-          RegExp(baseConfigEntryPoint(flavor.key, target.value)),
-        );
+          final baseConfigPos = input!.indexOf(
+            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
+          );
 
-        input = input!.substring(baseConfigPos);
+          input = input!.substring(baseConfigPos);
 
-        _updateProfileSpecifier(buffer, flavor.value);
-        _appendEndContent(buffer, entryPointPos);
+          buffer
+              .write('$entryPoint = "${getValue(entryPoint, flavor.value)}";');
 
-        input = buffer.toString();
-        buffer.clear();
+          _appendEndContent(buffer, entryPointPos);
+
+          input = buffer.toString();
+          buffer.clear();
+        }
       }
     }
 
@@ -50,6 +59,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     StringBuffer buffer,
     String flavorName,
     String target,
+    String entryPoint,
   ) {
     final baseConfigPos =
         input!.indexOf(RegExp(baseConfigEntryPoint(flavorName, target)));
@@ -66,14 +76,19 @@ class IOSPbxprojProcessor extends StringProcessor {
     return entryPointPos;
   }
 
-  void _updateProfileSpecifier(StringBuffer buffer, Flavor flavor) {
-    final profileName = flavor.ios.profileName;
-
-    buffer.write('$entryPoint = "$profileName";');
-  }
-
   void _appendEndContent(StringBuffer buffer, int entryPointPos) {
     final int end = input!.substring(entryPointPos).indexOf(';') + 1;
     buffer.write(input!.substring(entryPointPos + end));
+  }
+
+  String getValue(String entryPoint, Flavor flavor) {
+    switch (entryPoint) {
+      case teamIDEntryPoint:
+        return flavor.ios.teamID;
+      case provProfileEntryPoint:
+        return flavor.ios.profileName;
+      default:
+        return '';
+    }
   }
 }
