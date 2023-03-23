@@ -72,6 +72,8 @@ class IOSXCConfigProcessor extends StringProcessor {
       'BUNDLE_NAME': Variable(value: _flavorName.toUpperCase()),
       'BUNDLE_DISPLAY_NAME': Variable(value: _flavor.app.name),
       'BUNDLE_IDENTIFIER': Variable(value: _flavor.ios.bundleId),
+      if (_flavor.ios.dynamicLinkPrefix != null)
+        'DYNAMIC_LINK_PREFIX': Variable(value: _flavor.ios.dynamicLinkPrefix!),
     })
       ..addAll(
         _flavor.ios.variables.where((_, variable) =>

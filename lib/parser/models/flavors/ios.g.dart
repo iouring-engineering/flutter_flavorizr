@@ -21,6 +21,7 @@ IOS _$IOSFromJson(Map json) {
   return IOS(
     bundleId: json['bundleId'] as String,
     profileName: json['profileName'] as String,
+    dynamicLinkPrefix: json['dynamicLinkPrefix'] as String?,
     teamID: json['teamID'] as String,
     variables: (json['variables'] as Map?)?.map(
           (k, e) => MapEntry(k as String,

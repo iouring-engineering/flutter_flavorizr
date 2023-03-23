@@ -37,6 +37,8 @@ class IOS extends OS with BuildSettingsMixin {
   final String bundleId;
   @JsonKey(required: true, disallowNullValue: true)
   final String profileName;
+  @JsonKey(required: false, disallowNullValue: false)
+  final String? dynamicLinkPrefix;
   final String teamID;
 
   @JsonKey(disallowNullValue: true, defaultValue: {})
@@ -45,6 +47,7 @@ class IOS extends OS with BuildSettingsMixin {
   IOS({
     required this.bundleId,
     required this.profileName,
+    this.dynamicLinkPrefix,
     required this.teamID,
     this.variables = const {},
     Map<String, dynamic> buildSettings = const {},
