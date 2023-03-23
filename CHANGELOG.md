@@ -3,6 +3,7 @@
 * Updated BUNDLE_IDENTIFIER in XCConfig files
 * Minor corrections
 
+
 ## 2.1.5
 * Json serializable build runner setup
 * Bumped dependencies
