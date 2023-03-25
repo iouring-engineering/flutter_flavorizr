@@ -1,20 +1,18 @@
 name: Create Tag
-
 on:
   push:
     branches:
       - master
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: butlerlogic/action-autotag@stable
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-      with:
-        strategy: regex
-        root: "pubspec.yaml"
-        regex_pattern: "version: (([0-9]+)\.([0-9]+)\.([0-9]+))"
-        tag_prefix: "v"
+      - uses: actions/checkout@v2
+      - uses: butlerlogic/action-autotag@stable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          strategy: regex
+          root: pubspec.yaml
+          regex_pattern: "version: (([0-9]+)\\.([0-9]+)\\.([0-9]+))"
+          tag_prefix: v
