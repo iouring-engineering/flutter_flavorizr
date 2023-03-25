@@ -1,3 +1,6 @@
+## 2.1.7
+* Added DYNAMIC_LINK_PREFIX in XCConfig files
+
 ## 2.1.6
 * Implemented IOSPbxprojProcessor to update ios/Runner.xcodeproj/project.pbxproj file
 * Updated BUNDLE_IDENTIFIER in XCConfig files
