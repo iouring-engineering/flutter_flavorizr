@@ -23,6 +23,7 @@ IOS _$IOSFromJson(Map json) {
     profileName: json['profileName'] as String,
     dynamicLinkPrefix: json['dynamicLinkPrefix'] as String?,
     teamID: json['teamID'] as String,
+    reversedGoogleClientID: json['reversedGoogleClientID'] as String?,
     variables: (json['variables'] as Map?)?.map(
           (k, e) => MapEntry(k as String,
               Variable.fromJson(Map<String, dynamic>.from(e as Map))),
