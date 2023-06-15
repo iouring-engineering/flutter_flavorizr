@@ -41,6 +41,8 @@ class IOS extends OS with BuildSettingsMixin {
   final String? dynamicLinkPrefix;
   final String teamID;
   final String? reversedGoogleClientID;
+  final String? facebookAppID;
+  final String? facebookClientToken;
 
   @JsonKey(disallowNullValue: true, defaultValue: {})
   final Map<String, Variable> variables;
@@ -51,6 +53,8 @@ class IOS extends OS with BuildSettingsMixin {
     this.dynamicLinkPrefix,
     required this.teamID,
     this.reversedGoogleClientID,
+    this.facebookAppID,
+    this.facebookClientToken,
     this.variables = const {},
     Map<String, dynamic> buildSettings = const {},
     bool generateDummyAssets = true,
