@@ -76,6 +76,14 @@ class IOSXCConfigProcessor extends StringProcessor {
         'DYNAMIC_LINK_PREFIX': Variable(value: _flavor.ios.dynamicLinkPrefix!),
       if (_flavor.ios.weLicenseCode != null)
         'WE_LICENSE_CODE': Variable(value: _flavor.ios.weLicenseCode!),
+      if (_flavor.ios.reversedGoogleClientID != null)
+        'REVERSED_GOOGLE_CLIENT_ID':
+            Variable(value: _flavor.ios.reversedGoogleClientID!),
+      if (_flavor.ios.facebookAppID != null)
+        'FACEBOOK_APP_ID': Variable(value: _flavor.ios.facebookAppID!),
+      if (_flavor.ios.facebookClientToken != null)
+        'FACEBOOK_CLIENT_TOKEN':
+            Variable(value: _flavor.ios.facebookClientToken!),
     })
       ..addAll(
         _flavor.ios.variables.where((_, variable) =>
