@@ -22,7 +22,11 @@ IOS _$IOSFromJson(Map json) {
     bundleId: json['bundleId'] as String,
     profileName: json['profileName'] as String,
     dynamicLinkPrefix: json['dynamicLinkPrefix'] as String?,
+    weLicenseCode: json['weLicenseCode'] as String?,
     teamID: json['teamID'] as String,
+    reversedGoogleClientID: json['reversedGoogleClientID'] as String?,
+    facebookAppID: json['facebookAppID'] as String?,
+    facebookClientToken: json['facebookClientToken'] as String?,
     variables: (json['variables'] as Map?)?.map(
           (k, e) => MapEntry(k as String,
               Variable.fromJson(Map<String, dynamic>.from(e as Map))),
