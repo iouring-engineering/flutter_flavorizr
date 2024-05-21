@@ -106,7 +106,7 @@ class IOSPbxprojProcessor extends StringProcessor {
       case provProfileEntryPoint:
         return flavor.ios.profileName;
       case productBundleId:
-        return '${flavor.ios.bundleId}ServiceExtension';
+        return '${flavor.ios.bundleId}.ServiceExtension';
       default:
         return '';
     }
