@@ -6,16 +6,25 @@ import 'package:flutter_flavorizr/processors/commons/string_processor.dart';
 class IOSPbxprojProcessor extends StringProcessor {
   static const String teamIDEntryPoint = 'DEVELOPMENT_TEAM';
   static const String provProfileEntryPoint = 'PROVISIONING_PROFILE_SPECIFIER';
+  static const String productBundleId = 'PRODUCT_BUNDLE_IDENTIFIER';
   static const List<String> entryPoints = [
     teamIDEntryPoint,
     provProfileEntryPoint,
+    productBundleId,
   ];
 
   String _target(String target) =>
       target.substring(0, 1).toUpperCase() + target.substring(1);
 
+  // baseConfigurationReference = 6B3EF2DCF38ED12319303651 /* Pods-ServiceExtension.debug-prod.xcconfig */;
+
+  // baseConfigurationReference = 0A9CAEF07F8B84FF507FE827 /* qaDebug.xcconfig */;
+
   String baseConfigEntryPoint(String flavorName, String target) =>
       'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
+
+  String productBundleIdEntryPoint(String flavorName, String target) =>
+      'baseConfigurationReference = (.*)Pods-ServiceExtension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
 
   IOSPbxprojProcessor({
     String? input,
@@ -31,10 +40,16 @@ class IOSPbxprojProcessor extends StringProcessor {
         for (final flavor in config.flavors.entries) {
           final entryPointPos =
               _appendStartContent(buffer, flavor.key, target.value, entryPoint);
-
-          final baseConfigPos = input!.indexOf(
-            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
-          );
+          final int baseConfigPos;
+          if (entryPoint == entryPoints.last) {
+            baseConfigPos = input!.indexOf(
+              RegExp(productBundleIdEntryPoint(flavor.key, target.value)),
+            );
+          } else {
+            baseConfigPos = input!.indexOf(
+              RegExp(baseConfigEntryPoint(flavor.key, target.value)),
+            );
+          }
 
           input = input!.substring(baseConfigPos);
 
@@ -87,6 +102,8 @@ class IOSPbxprojProcessor extends StringProcessor {
         return flavor.ios.teamID;
       case provProfileEntryPoint:
         return flavor.ios.profileName;
+      case productBundleId:
+        return flavor.ios.bundleId;
       default:
         return '';
     }
