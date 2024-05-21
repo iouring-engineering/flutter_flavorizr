@@ -16,14 +16,11 @@ class IOSPbxprojProcessor extends StringProcessor {
   String _target(String target) =>
       target.substring(0, 1).toUpperCase() + target.substring(1);
 
-  // baseConfigurationReference = 6B3EF2DCF38ED12319303651 /* Pods-ServiceExtension.debug-prod.xcconfig */;
-
-  // baseConfigurationReference = 0A9CAEF07F8B84FF507FE827 /* qaDebug.xcconfig */;
-
-  // String baseConfigEntryPoint(String flavorName, String target) =>
-  //     'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
-
   String baseConfigEntryPoint(String flavorName, String target) =>
+      'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
+
+  String baseConfigEntryPointServiceExtension(
+          String flavorName, String target) =>
       'baseConfigurationReference = (.*)Pods-ServiceExtension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
 
   IOSPbxprojProcessor({
@@ -54,6 +51,18 @@ class IOSPbxprojProcessor extends StringProcessor {
 
           input = buffer.toString();
           buffer.clear();
+
+          // Notification Service Extension[nse] base configuration entry point
+          final nseBaseConfigPosition = input!.indexOf(RegExp(
+              baseConfigEntryPointServiceExtension(flavor.key, target.value)));
+
+          if (nseBaseConfigPosition != -1) {
+            final int nseBaseConfigEntryPointPosition =
+                input!.indexOf(entryPoint, nseBaseConfigPosition);
+
+            input =
+                '${input!.substring(0, nseBaseConfigEntryPointPosition)}$entryPoint = "${getValue(entryPoint, flavor.value)}";${input!.substring(nseBaseConfigEntryPointPosition + entryPoint.length + 2)}';
+          }
         }
       }
     }
@@ -97,7 +106,7 @@ class IOSPbxprojProcessor extends StringProcessor {
       case provProfileEntryPoint:
         return flavor.ios.profileName;
       case productBundleId:
-        return flavor.ios.bundleId;
+        return '${flavor.ios.bundleId}ServiceExtension';
       default:
         return '';
     }
