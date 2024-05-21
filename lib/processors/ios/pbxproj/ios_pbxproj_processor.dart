@@ -20,10 +20,10 @@ class IOSPbxprojProcessor extends StringProcessor {
 
   // baseConfigurationReference = 0A9CAEF07F8B84FF507FE827 /* qaDebug.xcconfig */;
 
-  String baseConfigEntryPoint(String flavorName, String target) =>
-      'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
+  // String baseConfigEntryPoint(String flavorName, String target) =>
+  //     'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
 
-  String productBundleIdEntryPoint(String flavorName, String target) =>
+  String baseConfigEntryPoint(String flavorName, String target) =>
       'baseConfigurationReference = (.*)Pods-ServiceExtension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
 
   IOSPbxprojProcessor({
@@ -41,15 +41,9 @@ class IOSPbxprojProcessor extends StringProcessor {
           final entryPointPos =
               _appendStartContent(buffer, flavor.key, target.value, entryPoint);
           final int baseConfigPos;
-          if (entryPoint == entryPoints.last) {
-            baseConfigPos = input!.indexOf(
-              RegExp(productBundleIdEntryPoint(flavor.key, target.value)),
-            );
-          } else {
-            baseConfigPos = input!.indexOf(
-              RegExp(baseConfigEntryPoint(flavor.key, target.value)),
-            );
-          }
+          baseConfigPos = input!.indexOf(
+            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
+          );
 
           input = input!.substring(baseConfigPos);
 
