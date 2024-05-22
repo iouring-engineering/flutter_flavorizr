@@ -34,8 +34,8 @@ class IOSPbxprojProcessor extends StringProcessor {
           baseConfigPos = input!.indexOf(
             RegExp(
               getBaseConfigEntryPointValue(
-                entryPoint: entryPoint,
-                target: target.value,
+                entryPoint: target.value,
+                target: entryPoint,
                 flavorName: flavor.key,
               ),
             ),
