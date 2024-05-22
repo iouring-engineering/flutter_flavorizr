@@ -45,7 +45,7 @@ class IOSPbxprojProcessor extends StringProcessor {
             final int baseConfigPos;
             baseConfigPos = input!.indexOf(
               RegExp(
-                getBaseConfigEntryPointValue(
+                _getBaseConfigEntryPointValue(
                   entryPoint: entryPoint,
                   target: target.value,
                   flavorName: flavor.key,
@@ -57,7 +57,7 @@ class IOSPbxprojProcessor extends StringProcessor {
             input = input!.substring(baseConfigPos);
 
             buffer.write(
-              '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";',
+              '$entryPoint = "${_getValue(entryPoint, flavor.value, extension)}";',
             );
 
             _appendEndContent(buffer, entryPointPos);
@@ -84,7 +84,7 @@ class IOSPbxprojProcessor extends StringProcessor {
   ) {
     final baseConfigPos = input!.indexOf(
       RegExp(
-        getBaseConfigEntryPointValue(
+        _getBaseConfigEntryPointValue(
           entryPoint: entryPoint,
           flavorName: flavorName,
           target: target,
@@ -105,7 +105,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     return entryPointPos;
   }
 
-  String getBaseConfigEntryPointValue({
+  String _getBaseConfigEntryPointValue({
     required String entryPoint,
     required String target,
     required String flavorName,
@@ -123,7 +123,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     buffer.write(input!.substring(entryPointPos + end));
   }
 
-  String getValue(String entryPoint, Flavor flavor, String extensionTarget) {
+  String _getValue(String entryPoint, Flavor flavor, String extensionTarget) {
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
