@@ -7,10 +7,13 @@ class IOSPbxprojProcessor extends StringProcessor {
   static const String teamIDEntryPoint = 'DEVELOPMENT_TEAM';
   static const String provProfileEntryPoint = 'PROVISIONING_PROFILE_SPECIFIER';
   static const String productBundleId = 'PRODUCT_BUNDLE_IDENTIFIER';
+  static const String provProfileSpecifierEntryPoint =
+      'PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]';
   static const List<String> entryPoints = [
     teamIDEntryPoint,
     provProfileEntryPoint,
     productBundleId,
+    provProfileSpecifierEntryPoint,
   ];
   static const serviceExtension = 'ServiceExtension';
   static const contentExtension = 'ContentExtension';
@@ -113,18 +116,6 @@ class IOSPbxprojProcessor extends StringProcessor {
   }) {
     if (entryPoint == productBundleId) {
       return 'baseConfigurationReference = (.*)Pods-$extensionTarget.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
-    } else if (entryPoint == provProfileEntryPoint) {
-      final targetValue = RegExp.escape(flavorName) +
-          RegExp.escape(_target(target)) +
-          r'|' +
-          r'Pods-' +
-          RegExp.escape(extensionTarget ?? '') +
-          r'\.' +
-          RegExp.escape(target.toLowerCase()) +
-          r'-' +
-          RegExp.escape(flavorName);
-
-      return 'baseConfigurationReference = (.*)$targetValue.xcconfig \\*/;';
     } else {
       return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
     }
