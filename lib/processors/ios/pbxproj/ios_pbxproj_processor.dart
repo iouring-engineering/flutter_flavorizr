@@ -12,6 +12,12 @@ class IOSPbxprojProcessor extends StringProcessor {
     provProfileEntryPoint,
     productBundleId,
   ];
+  static const serviceExtension = 'ServiceExtension';
+  static const contentExtension = 'ContentExtension';
+  static const List<String> extensionTargets = [
+    serviceExtension,
+    contentExtension,
+  ];
 
   String _target(String target) =>
       target.substring(0, 1).toUpperCase() + target.substring(1);
@@ -28,28 +34,37 @@ class IOSPbxprojProcessor extends StringProcessor {
     for (final entryPoint in entryPoints) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
-          final entryPointPos =
-              _appendStartContent(buffer, flavor.key, target.value, entryPoint);
-          final int baseConfigPos;
-          baseConfigPos = input!.indexOf(
-            RegExp(
-              getBaseConfigEntryPointValue(
-                entryPoint: entryPoint,
-                target: target.value,
-                flavorName: flavor.key,
+          for (final extension in extensionTargets) {
+            final entryPointPos = _appendStartContent(
+              buffer,
+              flavor.key,
+              target.value,
+              entryPoint,
+              extension,
+            );
+            final int baseConfigPos;
+            baseConfigPos = input!.indexOf(
+              RegExp(
+                getBaseConfigEntryPointValue(
+                  entryPoint: entryPoint,
+                  target: target.value,
+                  flavorName: flavor.key,
+                  extensionTarget: extension,
+                ),
               ),
-            ),
-          );
+            );
 
-          input = input!.substring(baseConfigPos);
+            input = input!.substring(baseConfigPos);
 
-          buffer
-              .write('$entryPoint = "${getValue(entryPoint, flavor.value)}";');
+            buffer.write(
+              '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";',
+            );
 
-          _appendEndContent(buffer, entryPointPos);
+            _appendEndContent(buffer, entryPointPos);
 
-          input = buffer.toString();
-          buffer.clear();
+            input = buffer.toString();
+            buffer.clear();
+          }
         }
       }
     }
@@ -65,6 +80,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     String flavorName,
     String target,
     String entryPoint,
+    String? extensionTarget,
   ) {
     final baseConfigPos = input!.indexOf(
       RegExp(
@@ -72,6 +88,7 @@ class IOSPbxprojProcessor extends StringProcessor {
           entryPoint: entryPoint,
           flavorName: flavorName,
           target: target,
+          extensionTarget: extensionTarget,
         ),
       ),
     );
@@ -92,13 +109,12 @@ class IOSPbxprojProcessor extends StringProcessor {
     required String entryPoint,
     required String target,
     required String flavorName,
+    String? extensionTarget = '',
   }) {
     if (entryPoint != productBundleId) {
       return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
     } else {
-      const extensionPattern = r'(ContentExtension|ServiceExtension)';
-
-      return 'baseConfigurationReference = (.*)Pods-$extensionPattern.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
+      return 'baseConfigurationReference = (.*)Pods-$extensionTarget.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
     }
   }
 
@@ -107,14 +123,14 @@ class IOSPbxprojProcessor extends StringProcessor {
     buffer.write(input!.substring(entryPointPos + end));
   }
 
-  String getValue(String entryPoint, Flavor flavor) {
+  String getValue(String entryPoint, Flavor flavor, String extensionTarget) {
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
       case provProfileEntryPoint:
         return flavor.ios.profileName;
       case productBundleId:
-        return '${flavor.ios.bundleId}.ServiceExtension';
+        return '${flavor.ios.bundleId}.$extensionTarget';
       default:
         return '';
     }
