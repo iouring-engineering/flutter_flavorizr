@@ -114,9 +114,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     if (entryPoint == productBundleId) {
       return 'baseConfigurationReference = (.*)Pods-$extensionTarget.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
     } else if (entryPoint == provProfileEntryPoint) {
-      String targetValue =
-          '($flavorName${_target(target)}|Pods-$extensionTarget.${target.toLowerCase()}-$flavorName)';
-      return 'baseConfigurationReference = (.*)$targetValue.xcconfig \\*/;';
+      return 'baseConfigurationReference = (.*)Pods-$extensionTarget.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
     } else {
       return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
     }
