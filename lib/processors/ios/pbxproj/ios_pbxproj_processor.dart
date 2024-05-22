@@ -34,7 +34,10 @@ class IOSPbxprojProcessor extends StringProcessor {
           baseConfigPos = input!.indexOf(
             RegExp(
               getBaseConfigEntryPointValue(
-                  entryPoint, flavor.key, target.value),
+                entryPoint: entryPoint,
+                target: target.value,
+                flavorName: flavor.key,
+              ),
             ),
           );
 
@@ -65,7 +68,11 @@ class IOSPbxprojProcessor extends StringProcessor {
   ) {
     final baseConfigPos = input!.indexOf(
       RegExp(
-        getBaseConfigEntryPointValue(entryPoint, flavorName, target),
+        getBaseConfigEntryPointValue(
+          entryPoint: entryPoint,
+          flavorName: flavorName,
+          target: target,
+        ),
       ),
     );
 
@@ -81,8 +88,11 @@ class IOSPbxprojProcessor extends StringProcessor {
     return entryPointPos;
   }
 
-  String getBaseConfigEntryPointValue(
-      String entryPoint, String target, String flavorName) {
+  String getBaseConfigEntryPointValue({
+    required String entryPoint,
+    required String target,
+    required String flavorName,
+  }) {
     if (entryPoint != productBundleId) {
       return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
     } else {
