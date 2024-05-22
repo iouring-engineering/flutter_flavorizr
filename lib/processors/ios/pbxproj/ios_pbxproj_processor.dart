@@ -96,7 +96,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     if (entryPoint != productBundleId) {
       return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
     } else {
-      const extensionPattern = r'(ServiceExtension|ContentExtension)';
+      const extensionPattern = r'(ContentExtension|ServiceExtension)';
 
       return 'baseConfigurationReference = (.*)Pods-$extensionPattern.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
     }
