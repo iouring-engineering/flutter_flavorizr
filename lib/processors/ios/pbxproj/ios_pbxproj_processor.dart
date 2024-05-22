@@ -16,13 +16,6 @@ class IOSPbxprojProcessor extends StringProcessor {
   String _target(String target) =>
       target.substring(0, 1).toUpperCase() + target.substring(1);
 
-  String baseConfigEntryPoint(String flavorName, String target) =>
-      'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
-
-  String baseConfigEntryPointServiceExtension(
-          String flavorName, String target) =>
-      'baseConfigurationReference = (.*)Pods-ServiceExtension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
-
   IOSPbxprojProcessor({
     String? input,
     required Flavorizr config,
@@ -39,7 +32,10 @@ class IOSPbxprojProcessor extends StringProcessor {
               _appendStartContent(buffer, flavor.key, target.value, entryPoint);
           final int baseConfigPos;
           baseConfigPos = input!.indexOf(
-            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
+            RegExp(
+              getBaseConfigEntryPointValue(
+                  entryPoint, flavor.key, target.value),
+            ),
           );
 
           input = input!.substring(baseConfigPos);
@@ -51,18 +47,6 @@ class IOSPbxprojProcessor extends StringProcessor {
 
           input = buffer.toString();
           buffer.clear();
-
-          // Notification Service Extension[nse] base configuration entry point
-          final nseBaseConfigPosition = input!.indexOf(RegExp(
-              baseConfigEntryPointServiceExtension(flavor.key, target.value)));
-
-          if (nseBaseConfigPosition != -1) {
-            final int nseBaseConfigEntryPointPosition =
-                input!.indexOf(entryPoint, nseBaseConfigPosition);
-
-            input =
-                '${input!.substring(0, nseBaseConfigEntryPointPosition)}$entryPoint = "${getValue(entryPoint, flavor.value)}";${input!.substring(nseBaseConfigEntryPointPosition + entryPoint.length + 2)}';
-          }
         }
       }
     }
@@ -79,8 +63,11 @@ class IOSPbxprojProcessor extends StringProcessor {
     String target,
     String entryPoint,
   ) {
-    final baseConfigPos =
-        input!.indexOf(RegExp(baseConfigEntryPoint(flavorName, target)));
+    final baseConfigPos = input!.indexOf(
+      RegExp(
+        getBaseConfigEntryPointValue(entryPoint, flavorName, target),
+      ),
+    );
 
     final startContent = input!.substring(0, baseConfigPos);
     final endContent = input!.substring(baseConfigPos);
@@ -92,6 +79,15 @@ class IOSPbxprojProcessor extends StringProcessor {
     buffer.write(endContent.substring(0, entryPointPos));
 
     return entryPointPos;
+  }
+
+  String getBaseConfigEntryPointValue(
+      String entryPoint, String target, String flavorName) {
+    if (entryPoint != productBundleId) {
+      return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
+    } else {
+      return 'baseConfigurationReference = (.*)Pods-ServiceExtension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
+    }
   }
 
   void _appendEndContent(StringBuffer buffer, int entryPointPos) {
