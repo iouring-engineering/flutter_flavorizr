@@ -111,10 +111,14 @@ class IOSPbxprojProcessor extends StringProcessor {
     required String flavorName,
     String? extensionTarget = '',
   }) {
-    if (entryPoint != productBundleId) {
-      return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
-    } else {
+    if (entryPoint == productBundleId) {
       return 'baseConfigurationReference = (.*)Pods-$extensionTarget.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
+    } else if (entryPoint == provProfileEntryPoint) {
+      const targetValue =
+          r'($flavorName${_target(target)}|Pods-$extensionTarget.${target.toLowerCase()}-$flavorName)';
+      return 'baseConfigurationReference = (.*)$targetValue.xcconfig \\*/;';
+    } else {
+      return 'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
     }
   }
 
