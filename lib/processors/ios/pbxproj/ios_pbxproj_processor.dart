@@ -124,6 +124,13 @@ class IOSPbxprojProcessor extends StringProcessor {
     final baseConfigPos = input!.indexOf(
         RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension)));
 
+    print('===>flavor = $flavorName');
+    print('===>target = $target');
+    print('===>entryPoint = $entryPoint');
+    print('===>extension = $extension');
+    print(
+        '===>base config string = ${baseConfigExtensionEntryPoint(flavorName, target, extension)}');
+
     final startContent = input!.substring(0, baseConfigPos);
     final endContent = input!.substring(baseConfigPos);
 
