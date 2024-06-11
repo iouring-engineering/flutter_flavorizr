@@ -6,16 +6,27 @@ import 'package:flutter_flavorizr/processors/commons/string_processor.dart';
 class IOSPbxprojProcessor extends StringProcessor {
   static const String teamIDEntryPoint = 'DEVELOPMENT_TEAM';
   static const String provProfileEntryPoint = 'PROVISIONING_PROFILE_SPECIFIER';
+  static const String productBundleIdEntryPoint = 'PRODUCT_BUNDLE_IDENTIFIER';
   static const List<String> entryPoints = [
     teamIDEntryPoint,
     provProfileEntryPoint,
+    productBundleIdEntryPoint,
   ];
+
+  static const String serviceExtension = 'ServiceExtension';
+  static const String contentExtension = 'ContentExtension';
+
+  static const List<String> extensions = [serviceExtension, contentExtension];
 
   String _target(String target) =>
       target.substring(0, 1).toUpperCase() + target.substring(1);
 
   String baseConfigEntryPoint(String flavorName, String target) =>
       'baseConfigurationReference = (.*)$flavorName${_target(target)}.xcconfig \\*/;';
+
+  String baseConfigExtensionEntryPoint(
+          String flavorName, String target, String extension) =>
+      'baseConfigurationReference = (.*)Pods-$extension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
 
   IOSPbxprojProcessor({
     String? input,
@@ -38,10 +49,37 @@ class IOSPbxprojProcessor extends StringProcessor {
 
           input = input!.substring(baseConfigPos);
 
-          buffer
-              .write('$entryPoint = "${getValue(entryPoint, flavor.value)}";');
+          buffer.write(
+              '$entryPoint = "${getValue(entryPoint, flavor.value, "")}";');
 
           _appendEndContent(buffer, entryPointPos);
+
+          for (final extension in extensions) {
+            final entryPointPos = _appendExtensionStartContent(
+              buffer,
+              flavor.key,
+              target.value,
+              entryPoint,
+              extension,
+            );
+
+            final baseConfigPos = input!.indexOf(
+              RegExp(
+                baseConfigExtensionEntryPoint(
+                  flavor.key,
+                  target.value,
+                  extension,
+                ),
+              ),
+            );
+
+            input = input!.substring(baseConfigPos);
+
+            buffer.write(
+                '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";');
+
+            _appendEndContent(buffer, entryPointPos);
+          }
 
           input = buffer.toString();
           buffer.clear();
@@ -76,17 +114,41 @@ class IOSPbxprojProcessor extends StringProcessor {
     return entryPointPos;
   }
 
+  int _appendExtensionStartContent(
+    StringBuffer buffer,
+    String flavorName,
+    String target,
+    String entryPoint,
+    String extension,
+  ) {
+    final baseConfigPos = input!.indexOf(
+        RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension)));
+
+    final startContent = input!.substring(0, baseConfigPos);
+    final endContent = input!.substring(baseConfigPos);
+
+    final int entryPointPos = endContent.indexOf(entryPoint);
+
+    buffer.write(startContent);
+
+    buffer.write(endContent.substring(0, entryPointPos));
+
+    return entryPointPos;
+  }
+
   void _appendEndContent(StringBuffer buffer, int entryPointPos) {
     final int end = input!.substring(entryPointPos).indexOf(';') + 1;
     buffer.write(input!.substring(entryPointPos + end));
   }
 
-  String getValue(String entryPoint, Flavor flavor) {
+  String getValue(String entryPoint, Flavor flavor, String extension) {
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
       case provProfileEntryPoint:
         return flavor.ios.profileName;
+      case productBundleIdEntryPoint:
+        return flavor.ios.bundleId + extension;
       default:
         return '';
     }
