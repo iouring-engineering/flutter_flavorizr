@@ -46,7 +46,7 @@ class IOSPbxprojProcessor extends StringProcessor {
               flavor.key,
               target.value,
               entryPoint,
-              "",
+              extension,
             );
 
             final baseConfigPos = input!.indexOf(
@@ -86,8 +86,8 @@ class IOSPbxprojProcessor extends StringProcessor {
     String entryPoint,
     String extension,
   ) {
-    final baseConfigPos =
-        input!.indexOf(RegExp(baseConfigEntryPoint(flavorName, target)));
+    final baseConfigPos = input!.indexOf(
+        RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension)));
 
     final startContent = input!.substring(0, baseConfigPos);
     final endContent = input!.substring(baseConfigPos);
