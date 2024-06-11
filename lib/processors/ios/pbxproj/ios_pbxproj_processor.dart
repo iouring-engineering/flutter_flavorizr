@@ -26,7 +26,7 @@ class IOSPbxprojProcessor extends StringProcessor {
 
   String baseConfigExtensionEntryPoint(
           String flavorName, String target, String extension) =>
-      'baseConfigurationReference = (.*) Pods-$extension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
+      'baseConfigurationReference = (.*)Pods-$extension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
 
   IOSPbxprojProcessor({
     String? input,
@@ -124,10 +124,7 @@ class IOSPbxprojProcessor extends StringProcessor {
     final baseConfigPos = input!.indexOf(
         RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension)));
 
-    print('===>flavor = $flavorName');
-    print('===>target = $target');
-    print('===>entryPoint = $entryPoint');
-    print('===>extension = $extension');
+    print('===>baseConfigPos = $baseConfigPos');
     print(
         '===>base config string = ${baseConfigExtensionEntryPoint(flavorName, target, extension)}');
 
