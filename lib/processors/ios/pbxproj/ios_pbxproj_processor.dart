@@ -41,7 +41,7 @@ class IOSPbxprojProcessor extends StringProcessor {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
           for (final extension in extensions) {
-            final entryPointPos = _appendExtensionStartContent(
+            final entryPointPos = _appendStartContent(
               buffer,
               flavor.key,
               target.value,
@@ -67,8 +67,13 @@ class IOSPbxprojProcessor extends StringProcessor {
             _appendEndContent(buffer, entryPointPos);
           }
 
-          final entryPointPos =
-              _appendStartContent(buffer, flavor.key, target.value, entryPoint);
+          final entryPointPos = _appendStartContent(
+            buffer,
+            flavor.key,
+            target.value,
+            entryPoint,
+            "",
+          );
 
           final baseConfigPos = input!.indexOf(
             RegExp(baseConfigEntryPoint(flavor.key, target.value)),
@@ -94,27 +99,6 @@ class IOSPbxprojProcessor extends StringProcessor {
   String toString() => 'IOSPbxprojProcessor';
 
   int _appendStartContent(
-    StringBuffer buffer,
-    String flavorName,
-    String target,
-    String entryPoint,
-  ) {
-    final baseConfigPos =
-        input!.indexOf(RegExp(baseConfigEntryPoint(flavorName, target)));
-
-    final startContent = input!.substring(0, baseConfigPos);
-    final endContent = input!.substring(baseConfigPos);
-
-    final int entryPointPos = endContent.indexOf(entryPoint);
-
-    buffer.write(startContent);
-
-    buffer.write(endContent.substring(0, entryPointPos));
-
-    return entryPointPos;
-  }
-
-  int _appendExtensionStartContent(
     StringBuffer buffer,
     String flavorName,
     String target,
