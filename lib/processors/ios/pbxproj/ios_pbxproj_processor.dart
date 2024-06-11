@@ -36,43 +36,7 @@ class IOSPbxprojProcessor extends StringProcessor {
   @override
   String execute() {
     StringBuffer buffer = StringBuffer();
-
-    for (final entryPoint in entryPoints) {
-      for (final target in Target.values) {
-        for (final flavor in config.flavors.entries) {
-          for (final extension in extensions) {
-            final entryPointPos = _appendStartContent(
-              buffer,
-              flavor.key,
-              target.value,
-              entryPoint,
-              extension,
-            );
-
-            final baseConfigPos = input!.indexOf(
-              RegExp(
-                baseConfigExtensionEntryPoint(
-                  flavor.key,
-                  target.value,
-                  extension,
-                ),
-              ),
-            );
-
-            input = input!.substring(baseConfigPos);
-
-            buffer.write(
-              '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";',
-            );
-
-            _appendEndContent(buffer, entryPointPos);
-
-            input = buffer.toString();
-            buffer.clear();
-          }
-        }
-      }
-    }
+    runnerTargetProcessor(buffer);
 
     return input!;
   }
@@ -80,15 +44,51 @@ class IOSPbxprojProcessor extends StringProcessor {
   @override
   String toString() => 'IOSPbxprojProcessor';
 
+  String? runnerTargetProcessor(StringBuffer buffer) {
+    for (final entryPoint in entryPoints) {
+      for (final target in Target.values) {
+        for (final flavor in config.flavors.entries) {
+          final entryPointPos = _appendStartContent(
+            buffer,
+            flavor.key,
+            target.value,
+            entryPoint,
+          );
+
+          final baseConfigPos = input!.indexOf(
+            RegExp(
+              baseConfigEntryPoint(
+                flavor.key,
+                target.value,
+              ),
+            ),
+          );
+
+          input = input!.substring(baseConfigPos);
+
+          buffer.write(
+            '$entryPoint = "${getValue(entryPoint, flavor.value)}";',
+          );
+
+          _appendEndContent(buffer, entryPointPos);
+
+          input = buffer.toString();
+          buffer.clear();
+        }
+      }
+    }
+
+    return input;
+  }
+
   int _appendStartContent(
     StringBuffer buffer,
     String flavorName,
     String target,
     String entryPoint,
-    String extension,
   ) {
-    final baseConfigPos = input!.indexOf(
-        RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension)));
+    final baseConfigPos =
+        input!.indexOf(RegExp(baseConfigEntryPoint(flavorName, target)));
 
     final startContent = input!.substring(0, baseConfigPos);
     final endContent = input!.substring(baseConfigPos);
@@ -107,15 +107,12 @@ class IOSPbxprojProcessor extends StringProcessor {
     buffer.write(input!.substring(entryPointPos + end));
   }
 
-  String getValue(String entryPoint, Flavor flavor, String extension) {
-    print('===>extension = $extension');
+  String getValue(String entryPoint, Flavor flavor) {
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
       case provProfileEntryPoint:
         return flavor.ios.profileName;
-      case productBundleIdEntryPoint:
-        return '${flavor.ios.bundleId}.$extension';
       default:
         return '';
     }
