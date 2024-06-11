@@ -10,7 +10,6 @@ class IOSPbxprojProcessor extends StringProcessor {
   static const List<String> entryPoints = [
     teamIDEntryPoint,
     provProfileEntryPoint,
-    productBundleIdEntryPoint,
   ];
 
   static const String serviceExtension = 'ServiceExtension';
@@ -86,7 +85,7 @@ class IOSPbxprojProcessor extends StringProcessor {
   String? extensionTargetProcessor() {
     StringBuffer buffer = StringBuffer();
 
-    for (final entryPoint in entryPoints) {
+    for (final entryPoint in entryPoints..add(productBundleIdEntryPoint)) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
           for (final extension in extensions) {
@@ -191,8 +190,6 @@ class IOSPbxprojProcessor extends StringProcessor {
         return flavor.ios.teamID;
       case provProfileEntryPoint:
         return flavor.ios.profileName;
-      case productBundleIdEntryPoint:
-        return '${flavor.ios.bundleId}.ex';
       default:
         return '';
     }
