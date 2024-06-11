@@ -40,32 +40,32 @@ class IOSPbxprojProcessor extends StringProcessor {
     for (final entryPoint in entryPoints) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
-          for (final extension in extensions) {
-            final entryPointPos = _appendStartContent(
-              buffer,
-              flavor.key,
-              target.value,
-              entryPoint,
-              extension,
-            );
-
-            final baseConfigPos = input!.indexOf(
-              RegExp(
-                baseConfigExtensionEntryPoint(
-                  flavor.key,
-                  target.value,
-                  extension,
-                ),
-              ),
-            );
-
-            input = input!.substring(baseConfigPos);
-
-            buffer.write(
-                '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";');
-
-            _appendEndContent(buffer, entryPointPos);
-          }
+          // for (final extension in extensions) {
+          //   final entryPointPos = _appendStartContent(
+          //     buffer,
+          //     flavor.key,
+          //     target.value,
+          //     entryPoint,
+          //     extension,
+          //   );
+          //
+          //   final baseConfigPos = input!.indexOf(
+          //     RegExp(
+          //       baseConfigExtensionEntryPoint(
+          //         flavor.key,
+          //         target.value,
+          //         extension,
+          //       ),
+          //     ),
+          //   );
+          //
+          //   input = input!.substring(baseConfigPos);
+          //
+          //   buffer.write(
+          //       '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";');
+          //
+          //   _appendEndContent(buffer, entryPointPos);
+          // }
 
           final entryPointPos = _appendStartContent(
             buffer,
