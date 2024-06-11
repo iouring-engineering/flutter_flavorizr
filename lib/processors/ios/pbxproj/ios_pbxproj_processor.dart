@@ -111,7 +111,11 @@ class IOSPbxprojProcessor extends StringProcessor {
             input = input!.substring(baseConfigPos);
 
             buffer.write(
-              '$entryPoint = "${getValue(entryPoint, flavor.value)}";',
+              '$entryPoint = "${getExtensionTargetValue(
+                entryPoint,
+                flavor.value,
+                extension,
+              )}";',
             );
 
             _appendEndContent(buffer, entryPointPos);
@@ -188,7 +192,24 @@ class IOSPbxprojProcessor extends StringProcessor {
       case provProfileEntryPoint:
         return flavor.ios.profileName;
       case productBundleIdEntryPoint:
-        return flavor.ios.bundleId;
+        return '${flavor.ios.bundleId}.ex';
+      default:
+        return '';
+    }
+  }
+
+  String getExtensionTargetValue(
+    String entryPoint,
+    Flavor flavor,
+    String extension,
+  ) {
+    switch (entryPoint) {
+      case teamIDEntryPoint:
+        return flavor.ios.teamID;
+      case provProfileEntryPoint:
+        return flavor.ios.profileName;
+      case productBundleIdEntryPoint:
+        return '${flavor.ios.bundleId}.ex';
       default:
         return '';
     }
