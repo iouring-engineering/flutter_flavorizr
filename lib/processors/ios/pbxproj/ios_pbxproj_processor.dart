@@ -40,20 +40,6 @@ class IOSPbxprojProcessor extends StringProcessor {
     for (final entryPoint in entryPoints) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
-          final entryPointPos =
-              _appendStartContent(buffer, flavor.key, target.value, entryPoint);
-
-          final baseConfigPos = input!.indexOf(
-            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
-          );
-
-          input = input!.substring(baseConfigPos);
-
-          buffer.write(
-              '$entryPoint = "${getValue(entryPoint, flavor.value, "")}";');
-
-          _appendEndContent(buffer, entryPointPos);
-
           for (final extension in extensions) {
             final entryPointPos = _appendExtensionStartContent(
               buffer,
@@ -80,6 +66,20 @@ class IOSPbxprojProcessor extends StringProcessor {
 
             _appendEndContent(buffer, entryPointPos);
           }
+
+          final entryPointPos =
+              _appendStartContent(buffer, flavor.key, target.value, entryPoint);
+
+          final baseConfigPos = input!.indexOf(
+            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
+          );
+
+          input = input!.substring(baseConfigPos);
+
+          buffer.write(
+              '$entryPoint = "${getValue(entryPoint, flavor.value, "")}";');
+
+          _appendEndContent(buffer, entryPointPos);
 
           input = buffer.toString();
           buffer.clear();
@@ -123,10 +123,6 @@ class IOSPbxprojProcessor extends StringProcessor {
   ) {
     final baseConfigPos = input!.indexOf(
         RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension)));
-
-    print('===>input = $input');
-    print(
-        '===>base config string = ${baseConfigExtensionEntryPoint(flavorName, target, extension)}');
 
     final startContent = input!.substring(0, baseConfigPos);
     final endContent = input!.substring(baseConfigPos);
