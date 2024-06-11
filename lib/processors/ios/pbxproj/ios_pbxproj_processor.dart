@@ -26,7 +26,7 @@ class IOSPbxprojProcessor extends StringProcessor {
 
   String baseConfigExtensionEntryPoint(
           String flavorName, String target, String extension) =>
-      'baseConfigurationReference = (.*)Pods-$extension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
+      'baseConfigurationReference = (.*) Pods-$extension.${target.toLowerCase()}-$flavorName.xcconfig \\*/;';
 
   IOSPbxprojProcessor({
     String? input,
