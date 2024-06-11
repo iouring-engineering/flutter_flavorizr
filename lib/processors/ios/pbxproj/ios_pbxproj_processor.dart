@@ -40,54 +40,35 @@ class IOSPbxprojProcessor extends StringProcessor {
     for (final entryPoint in entryPoints) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
-          // for (final extension in extensions) {
-          //   final entryPointPos = _appendStartContent(
-          //     buffer,
-          //     flavor.key,
-          //     target.value,
-          //     entryPoint,
-          //     extension,
-          //   );
-          //
-          //   final baseConfigPos = input!.indexOf(
-          //     RegExp(
-          //       baseConfigExtensionEntryPoint(
-          //         flavor.key,
-          //         target.value,
-          //         extension,
-          //       ),
-          //     ),
-          //   );
-          //
-          //   input = input!.substring(baseConfigPos);
-          //
-          //   buffer.write(
-          //       '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";');
-          //
-          //   _appendEndContent(buffer, entryPointPos);
-          // }
+          for (final extension in extensions) {
+            final entryPointPos = _appendStartContent(
+              buffer,
+              flavor.key,
+              target.value,
+              entryPoint,
+              "",
+            );
 
-          final entryPointPos = _appendStartContent(
-            buffer,
-            flavor.key,
-            target.value,
-            entryPoint,
-            "",
-          );
+            final baseConfigPos = input!.indexOf(
+              RegExp(
+                baseConfigExtensionEntryPoint(
+                  flavor.key,
+                  target.value,
+                  extension,
+                ),
+              ),
+            );
 
-          final baseConfigPos = input!.indexOf(
-            RegExp(baseConfigEntryPoint(flavor.key, target.value)),
-          );
+            input = input!.substring(baseConfigPos);
 
-          input = input!.substring(baseConfigPos);
+            buffer.write(
+                '$entryPoint = "${getValue(entryPoint, flavor.value, "")}";');
 
-          buffer.write(
-              '$entryPoint = "${getValue(entryPoint, flavor.value, "")}";');
+            _appendEndContent(buffer, entryPointPos);
 
-          _appendEndContent(buffer, entryPointPos);
-
-          input = buffer.toString();
-          buffer.clear();
+            input = buffer.toString();
+            buffer.clear();
+          }
         }
       }
     }
