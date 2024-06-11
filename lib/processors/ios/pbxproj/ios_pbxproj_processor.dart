@@ -62,7 +62,8 @@ class IOSPbxprojProcessor extends StringProcessor {
             input = input!.substring(baseConfigPos);
 
             buffer.write(
-                '$entryPoint = "${getValue(entryPoint, flavor.value, "")}";');
+              '$entryPoint = "${getValue(entryPoint, flavor.value, extension)}";',
+            );
 
             _appendEndContent(buffer, entryPointPos);
 
