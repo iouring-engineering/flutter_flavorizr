@@ -10,6 +10,7 @@ class IOSPbxprojProcessor extends StringProcessor {
   static const List<String> entryPoints = [
     teamIDEntryPoint,
     provProfileEntryPoint,
+    productBundleIdEntryPoint,
   ];
 
   static const String serviceExtension = 'ServiceExtension';
@@ -49,11 +50,12 @@ class IOSPbxprojProcessor extends StringProcessor {
     for (final entryPoint in entryPoints) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
-          final entryPointPos = _appendStartContent(
+          final entryPointPos = _appendContent(
             buffer,
             flavor.key,
             target.value,
             entryPoint,
+            null,
           );
 
           final baseConfigPos = input!.indexOf(
@@ -68,7 +70,7 @@ class IOSPbxprojProcessor extends StringProcessor {
           input = input!.substring(baseConfigPos);
 
           buffer.write(
-            '$entryPoint = "${getValue(entryPoint, flavor.value)}";',
+            '$entryPoint = "${_getValue(entryPoint, flavor.value, null)}";',
           );
 
           _appendEndContent(buffer, entryPointPos);
@@ -85,11 +87,11 @@ class IOSPbxprojProcessor extends StringProcessor {
   String? extensionTargetProcessor() {
     StringBuffer buffer = StringBuffer();
 
-    for (final entryPoint in entryPoints..add(productBundleIdEntryPoint)) {
+    for (final entryPoint in entryPoints) {
       for (final target in Target.values) {
         for (final flavor in config.flavors.entries) {
           for (final extension in extensions) {
-            final entryPointPos = _appendExtensionStartContent(
+            final entryPointPos = _appendContent(
               buffer,
               flavor.key,
               target.value,
@@ -110,7 +112,7 @@ class IOSPbxprojProcessor extends StringProcessor {
             input = input!.substring(baseConfigPos);
 
             buffer.write(
-              '$entryPoint = "${getExtensionTargetValue(
+              '$entryPoint = "${_getValue(
                 entryPoint,
                 flavor.value,
                 extension,
@@ -129,51 +131,23 @@ class IOSPbxprojProcessor extends StringProcessor {
     return input;
   }
 
-  int _appendStartContent(
+  int _appendContent(
     StringBuffer buffer,
     String flavorName,
     String target,
     String entryPoint,
+    String? extension,
   ) {
-    final baseConfigPos =
-        input!.indexOf(RegExp(baseConfigEntryPoint(flavorName, target)));
+    final regex = extension == null
+        ? RegExp(baseConfigEntryPoint(flavorName, target))
+        : RegExp(baseConfigExtensionEntryPoint(flavorName, target, extension));
 
+    final baseConfigPos = input!.indexOf(regex);
     final startContent = input!.substring(0, baseConfigPos);
     final endContent = input!.substring(baseConfigPos);
-
-    final int entryPointPos = endContent.indexOf(entryPoint);
-
-    buffer.write(startContent);
-
-    buffer.write(endContent.substring(0, entryPointPos));
-
-    return entryPointPos;
-  }
-
-  int _appendExtensionStartContent(
-    StringBuffer buffer,
-    String flavorName,
-    String target,
-    String entryPoint,
-    String extension,
-  ) {
-    final baseConfigPos = input!.indexOf(
-      RegExp(
-        baseConfigExtensionEntryPoint(
-          flavorName,
-          target,
-          extension,
-        ),
-      ),
-    );
-
-    final startContent = input!.substring(0, baseConfigPos);
-    final endContent = input!.substring(baseConfigPos);
-
-    final int entryPointPos = endContent.indexOf(entryPoint);
+    final entryPointPos = endContent.indexOf(entryPoint);
 
     buffer.write(startContent);
-
     buffer.write(endContent.substring(0, entryPointPos));
 
     return entryPointPos;
@@ -184,29 +158,14 @@ class IOSPbxprojProcessor extends StringProcessor {
     buffer.write(input!.substring(entryPointPos + end));
   }
 
-  String getValue(String entryPoint, Flavor flavor) {
-    switch (entryPoint) {
-      case teamIDEntryPoint:
-        return flavor.ios.teamID;
-      case provProfileEntryPoint:
-        return flavor.ios.profileName;
-      default:
-        return '';
-    }
-  }
-
-  String getExtensionTargetValue(
-    String entryPoint,
-    Flavor flavor,
-    String extension,
-  ) {
+  String _getValue(String entryPoint, Flavor flavor, String? extension) {
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
       case provProfileEntryPoint:
         return flavor.ios.profileName;
       case productBundleIdEntryPoint:
-        return '${flavor.ios.bundleId}.$extension';
+        return extension != null ? '${flavor.ios.bundleId}.$extension' : '';
       default:
         return '';
     }
