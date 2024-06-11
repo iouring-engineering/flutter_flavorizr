@@ -107,6 +107,7 @@ class IOSPbxprojProcessor extends StringProcessor {
   }
 
   String getValue(String entryPoint, Flavor flavor, String extension) {
+    print('===>extension = $extension');
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
