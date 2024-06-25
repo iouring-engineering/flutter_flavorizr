@@ -67,8 +67,6 @@ class IOSXCConfigProcessor extends StringProcessor {
   }
 
   void _appendBody(StringBuffer buffer) {
-    print('===>firebase client id:${_flavor.ios.firebaseClientId}');
-
     final Map<String, Variable> variables = LinkedHashMap.from({
       'FLUTTER_TARGET': Variable(value: 'lib/main_$_flavorName.dart'),
       'ASSET_PREFIX': Variable(value: _flavorName),
