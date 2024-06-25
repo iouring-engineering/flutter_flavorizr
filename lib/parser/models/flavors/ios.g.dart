@@ -23,6 +23,7 @@ IOS _$IOSFromJson(Map json) {
     profileName: json['profileName'] as String,
     dynamicLinkPrefix: json['dynamicLinkPrefix'] as String?,
     weLicenseCode: json['weLicenseCode'] as String?,
+    firebaseClientId: json['firebaseClientId'] as String?,
     teamID: json['teamID'] as String,
     reversedGoogleClientID: json['reversedGoogleClientID'] as String?,
     facebookAppID: json['facebookAppID'] as String?,

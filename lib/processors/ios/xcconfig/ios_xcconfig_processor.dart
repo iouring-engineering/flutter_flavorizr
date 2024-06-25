@@ -76,6 +76,8 @@ class IOSXCConfigProcessor extends StringProcessor {
         'DYNAMIC_LINK_PREFIX': Variable(value: _flavor.ios.dynamicLinkPrefix!),
       if (_flavor.ios.weLicenseCode != null)
         'WE_LICENSE_CODE': Variable(value: _flavor.ios.weLicenseCode!),
+      if (_flavor.ios.firebaseClientId != null)
+        'FIREBASE_CLIENT_ID': Variable(value: _flavor.ios.firebaseClientId!),
       if (_flavor.ios.reversedGoogleClientID != null)
         'REVERSED_GOOGLE_CLIENT_ID':
             Variable(value: _flavor.ios.reversedGoogleClientID!),
