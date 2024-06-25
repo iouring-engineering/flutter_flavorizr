@@ -44,6 +44,7 @@ class IOS extends OS with BuildSettingsMixin {
   final String? facebookAppID;
   final String? facebookClientToken;
   final String? weLicenseCode;
+  final String? firebaseClientId;
 
   @JsonKey(disallowNullValue: true, defaultValue: {})
   final Map<String, Variable> variables;
@@ -52,11 +53,12 @@ class IOS extends OS with BuildSettingsMixin {
     required this.bundleId,
     required this.profileName,
     this.dynamicLinkPrefix,
-    this.weLicenseCode,
     required this.teamID,
     this.reversedGoogleClientID,
     this.facebookAppID,
     this.facebookClientToken,
+    this.firebaseClientId,
+    this.weLicenseCode,
     this.variables = const {},
     Map<String, dynamic> buildSettings = const {},
     bool generateDummyAssets = true,
