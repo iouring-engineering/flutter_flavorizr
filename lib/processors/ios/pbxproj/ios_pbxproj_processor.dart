@@ -174,15 +174,21 @@ class IOSPbxprojProcessor extends StringProcessor {
     Flavor flavor,
     String extension,
   ) {
-    switch (entryPoint) {
-      case teamIDEntryPoint:
-        return flavor.ios.teamID;
-      case provProfileEntryPoint:
+    if (entryPoint == teamIDEntryPoint) {
+      return flavor.ios.teamID;
+    } else if (entryPoint == provProfileEntryPoint) {
+      if (extension.isEmpty) {
+        final extensionType = extension == serviceExtension
+            ? 'Service Extension'
+            : 'Content Extension';
+        return '${flavor.ios.profileName} Notification $extensionType';
+      } else {
         return flavor.ios.profileName;
-      case productBundleIdEntryPoint:
-        return '${flavor.ios.bundleId}.$extension';
-      default:
-        return '';
+      }
+    } else if (entryPoint == productBundleIdEntryPoint) {
+      return '${flavor.ios.bundleId}.$extension';
+    } else {
+      return '';
     }
   }
 }
