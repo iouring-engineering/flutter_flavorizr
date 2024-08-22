@@ -177,6 +177,10 @@ class IOSPbxprojProcessor extends StringProcessor {
     Flavor flavor,
     String extension,
   ) {
+    debugPrint('extension===>$extension');
+    debugPrint('flavor===>$flavor');
+    debugPrint('entryPoint===>$entryPoint');
+
     switch (entryPoint) {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
