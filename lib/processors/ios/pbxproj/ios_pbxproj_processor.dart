@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_flavorizr/parser/models/flavorizr.dart';
 import 'package:flutter_flavorizr/parser/models/flavors/flavor.dart';
 import 'package:flutter_flavorizr/parser/models/flavors/ios/enums.dart';
@@ -178,14 +177,7 @@ class IOSPbxprojProcessor extends StringProcessor {
       case teamIDEntryPoint:
         return flavor.ios.teamID;
       case provProfileEntryPoint:
-        final extensionType = extension == 'ServiceExtension'
-            ? 'Service Extension'
-            : 'Content Extension';
-        if (extension.isNotEmpty) {
-          return '${flavor.ios.profileName} Notification $extensionType';
-        } else {
-          return flavor.ios.profileName;
-        }
+        return flavor.ios.profileName;
       case productBundleIdEntryPoint:
         return '${flavor.ios.bundleId}.$extension';
       default:
