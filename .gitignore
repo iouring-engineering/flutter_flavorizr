@@ -4,6 +4,7 @@
 *.iml
 .packages
 .pub/
+*.lock
 
 build/
 .fvm/
